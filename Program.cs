@@ -2,11 +2,11 @@
 using CanonImgApi.Data;
 using Microsoft.EntityFrameworkCore;
 
-var myAllowSpecificOrigin = "_myAllowSpecificOrigin";
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
+ConfigurationManager configuration = builder.Configuration;
+IWebHostEnvironment environment = builder.Environment;
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -15,19 +15,18 @@ builder.Services.AddSwaggerGen();
 //datacontext
 builder.Services.AddDbContext<DataContext>(options =>
 {
+    //var server = configuration["DBServer"] ?? "localhost";
+    //var port = configuration["DBPort"] ?? "1443";
+    ////var user = configuration["DBUser"] ?? "SA";
+    ////var password = configuration["DBPassword"] ?? "1";
+    //var database = configuration["Database"] ?? "Imgs";
+
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+    //options.UseSqlServer($"Data Source={server}, {port};Initial Catalog={database};Integrated Security=false");
+
 });
 
-//builder.Services.AddCors(options =>
-//{
-//    options.AddPolicy(name: myAllowSpecificOrigin,
-//        name =>
-//        {
-//            name.AllowAnyHeader()
-//            .AllowAnyMethod()
-//            .AllowAnyHeader();
-//        });
-//});
+
 
 var app = builder.Build();
 
@@ -37,12 +36,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
-//enable all cors for test purposes
-//app.UseCors(x => x
-//    .AllowAnyHeader()
-//    .AllowAnyMethod()
-//    .AllowAnyHeader());
 
 app.UseCors(options => options.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 
